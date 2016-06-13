@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration san="true" sanPeriod="60 seconds" debug="false">
+	<property name="logger_name" value="loggerName"></property>
+	<contextName>${logger_name}</contextName>
+	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"></timestamp>
+	<!-- 日志输出到控制台 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- 日志写入到文件：每天生成一个日志文件(保留30个历史日志文件) -->
+	<appender name="FILE_DAY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>clinic.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- 日志写入到文件: 当文件大小超过100M的时候,日志文件将会被压缩并-->
+	<appender name="FILE_SIZE" class="ch.qos.logback.core.rolling.RollingFileAppender">   
+    <file>clinic.log</file>   
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">   
+      <fileNamePattern>clinic.%i.log.zip</fileNamePattern>   
+      <minIndex>1</minIndex>   
+      <maxIndex>12</maxIndex>   
+    </rollingPolicy>   
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">   
+     <maxFileSize>10MB</maxFileSize>   
+    </triggeringPolicy>   
+    <encoder>   
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
+    </encoder>
+  </appender>  
+  
+  
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</root>
+	
+	<logger name="com.clinic" level="INFO" additivity="false">
+		<appender-ref ref="FILE_SIZE"/>
+	</logger>
+	
+	<logger name="clinic" />
+</configuration>

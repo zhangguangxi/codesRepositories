@@ -1,0 +1,92 @@
+一、整体搭建:SSM(spring+springMvc+myBatis) maven
+
+
+二、布局分析
+    src/main/java
+    	  com.clinic
+    	  	  common
+    	  	  controller
+    	  	  dao
+    	  	  exception
+    	  	  model(Vo)
+		      response
+		      service
+		      session
+		      util    	  	  	
+    src/main/resources
+            config(dir)
+            log(dir)
+            mybatis(dir)
+            spring(dir)
+            	      applicationContex.xml
+            	      spring-dao.xml
+            	      spring-mvc.xml
+            	      spring-service.xml
+            	      spring-transaction.xml
+            beans.xml
+            clinic.sql
+            readMe
+      pom.xml      
+      
+      
+ 项目配置过程
+      1、web.xml
+      		<!-- 配置spring容器 -->
+      		1)配置<context-param>ContextConfiLocation(通过classpath的方式指定appilcationContext.xml文件的位置)
+      		   1)配置自动扫描,通过标签<context:component-scan>指定包路径,扫面注解类
+      		   2)通过spring的PropertyPlaceholderConfigurer类的property属性指定配置文件的位置(通过classpath方式)
+      		   3)通过import标签引入spring的相关配置文件
+      		   				"spring-dao.xml"
+      		   					   1)配置数据库连接池阿里巴巴的开源连接池DruidDataSource)
+      		   			   		   2)配置spring与mybatis(SqlSessionFactoryBean)
+      		   			   		   		  1)指定数据源
+      		   			   		   		  2)指定mybatis的配置文件位置(configLocation)
+      		   			   		   		  3)指定mapping配置文件的位置(mapperLocations)
+      		   			   		   3)配置mapper扫描器(MapperScannerConfigurer)
+      		   			   		          1)扫描基包路径
+      		   			   		          2)配置sqlSessionFactoryBean	  
+      		   			    "spring-transaction.xml"
+      		   			    		1)配置事务管理器(DataSourceTransactionManager)
+      		   			    		       1)指定数据源
+      		   			    		2)配置事务通知<tx:advice>
+      		   			    		         1)引用事务管理器
+      		   			    		         2)配置事务的传播特性
+      		   			    		3)配置AOP切面(用于指定事务通所应用的位置)<aop:config><aop:advisor>
+      		   			    		  1)引用事务通知(advice-ref)
+      		   			    		  2)指定执行点 pointcut               
+      		   			    "spring-service.xml"（常用的工具service，如springContextHolder(spring上下文) fifteenLongIdImpl生成15长度的id类）
+      		   			    		  
+      		2)配置ContextLoaderListener监听器
+      		
+      		3)配置字符过滤器CharacterEncodingFilter(配置异步请求)
+      		
+      		4)配置前端控制器springMVC(DispatcherServlet)
+      		
+      		
+      		
+ 
+ MVC层次设计
+      基层设计
+ 	  service:Baseservice<T extends VO<PK>,PK extends Serializable> 定义公用service方法
+ 	          BaseServiceImpl<T extends VO<PK>,PK extends Serializable>
+ 	  					 定义了两个抽象方法
+ 	  					 			protected abstract LogTool getLog();
+ 	  					 			protected abstract BizDao<T,PK>getDao();
+ 	  		  UserServiceImpl extends BaseServiceImpl(User,Long) implements UserService;
+ 	  		  			 			
+ 	  dao:AbstractDao<T extends Vo<PK>，Pk>抽象类:定义常用的模板(mybatisTempate,mogodbTemlate,stringRedisTempate,redisTemplate)
+ 	  	  
+ 	  	   抽象方法定义(子类访问权限)：getprename();
+ 	  	  MyBatisTemplate<T,PK> mybatisTemplate
+ 	  	   静态成员变量(通过spring容器实例化的spring上下文获取相应的bean进行注入)：MogoTemlate mogotempate
+ 	  	  			  StringRedisTempate stringRedisTemplate
+ 	  	  			  RedisTemplate<Serializable,Serializable> redisTempate
+ 	  	              JdbcTemplate jdbcTemplate(同层调用不同类型数据的时候可以用到)
+ 	  	  BizDao<T extends Vo<PK>,PK extends Serializable>:业务基层dao
+       
+ 	     abstract MybatisDaoImpl<T extends VO<PK>,PK extends Serializable> extends AbstractDao<T,PK> implements BizDao<T,PK>
+ 	     		
+         userDaoImpl extends MybatisDaoImpl<User,Long> implements UserDao  
+            
+
+            

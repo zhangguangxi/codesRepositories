@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace:Dao layer inteface of full path -->
+<mapper namespace="com.clinic.dao.UserDao">
+
+	<resultMap type="User" id="BaseResultMap">
+		<result column="id" property="id" />
+		<result column="chinese_name" property="chineseName" />
+		<result column="english_name" property="englishName" />
+		<result column="pinying_name" property="pinyingName" />
+		<result column="id_card" property="idCard" />
+		<result column="sex" property="sex" />
+		<result column="nation" property="nation" />
+		<result column="birthday" property="birthday" />
+		<result column="is_marry" property="isMarry" />
+		<result column="phone" property="phone" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime"/>
+	</resultMap>
+
+	<!-- user table all filed -->
+	<sql id="Base_Column_List">
+		t.id,t.chinese_name,t.english_name,t.pinying_name,t.id_card,t.sex,t.nation,t.birthday,t.is_marry,t.phone,t.create_time,t.update_time
+	</sql>
+
+	<!-- query condition -->
+	<sql id="Where_Condition">
+		<where>
+			<if test="id != null and id != '' ">
+				and t.id=#{id}
+			</if>
+			<if test="chineseName !=null  and chineseName != '' ">
+				and t.chinese_name=#{chineseName}
+			</if>
+			
+			<if test="englishName != null and chineseName != '' ">
+				and t.english_name = #{englishName}
+			</if>
+			<if test="pinyingName != null and pinyingname != '' ">
+				and t.pinying_name = #{pinyingName} 
+			</if>
+			<if test="idCard != null and idCard != '' ">
+				and t.id_card = #{idCard}
+			</if>
+			<if test="sex != null and sex != '' ">
+				and t.sex = #{sex}
+			</if>
+			<if test="nation != null and nation != '' ">
+				and t.nation = #{nation}
+			</if>
+			<if test="birthday != null and birthday != '' ">
+				and t.birthday = #{birthday}
+			</if>
+			<if test="isMarry != null isMarry">
+				and t.is_marry = #{isMarry}
+			</if>
+			<if test="phone != null and phone != '' ">
+			  and t.phone = #{phone}
+			</if>
+			<if test="createTime != null and createTime != '' ">
+			  and t.create_time= #{createTime}
+			</if>
+			<if test="updateTime != null and updateTime != '' ">
+			  and t.update_time = #{updateTime}
+			</if>
+		</where>
+	</sql>
+	
+	
+	<!-- 添加患者信息  -->
+	<insert id="addVo" parameterType="Object">
+		insert into t_user(t.id,t.chinese_name,t.english_name,t.pinying_name,t.id_card,t.sex,t.nation,t.birthday,t.is_marry,t.phone,t.create_time,t.update_time)
+		values(#{id},#{chineseName},#{englishName},#{pinyingName},#{idCard},#{sex},#{nation},#{birthday},#{isMarry},#{phone},#{createTime},#{updateTime})
+	</insert>
+
+	<!-- 根据id查询 患者信息-->
+	<select id="findVo" resultMap="BaseResultMap" parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		from t_user t where t.id = #{id}
+	</select>
+
+</mapper>
